@@ -2,7 +2,7 @@ require("dotenv").config();
 import express from "express";
 import Anthropic from "@anthropic-ai/sdk";
 import { BASE_PROMPT, getSystemPrompt } from "./prompts";
-import { ContentBlock, TextBlock } from "@anthropic-ai/sdk/resources";
+import { TextBlock } from "@anthropic-ai/sdk/resources/messages.mjs";
 import {basePrompt as nodeBasePrompt} from "./defaults/node";
 import {basePrompt as reactBasePrompt} from "./defaults/react";
 import cors from "cors";
@@ -24,7 +24,7 @@ app.post("/template", async (req, res) => {
         system: "Return either node or react based on what do you think this project should be. Only return a single word either 'node' or 'react'. Do not return anything extra"
     })
 
-    const answer = (response.content[0] as TextBlock).text; // react or node
+    const answer = (response.content[0] as TextBlock).text;
     if (answer == "react") {
         res.json({
             prompts: [BASE_PROMPT, `Here is an artifact that contains all files of the project visible to you.\nConsider the contents of ALL files in the project.\n\n${reactBasePrompt}\n\nHere is a list of files that exist on the file system but are not being shown to you:\n\n  - .gitignore\n  - package-lock.json\n`],
